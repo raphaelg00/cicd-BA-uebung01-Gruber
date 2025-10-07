@@ -17,7 +17,8 @@ class CalculatorTest {
     void add_shouldSumTwoIntegers() {
         Calculator c = new Calculator();
         assertEquals(5, c.add(2, 3));
-        // TODO: weitere Grenzfälle (z. B. negative Zahlen)
+        assertEquals(-1, c.add(2, -3));
+        assertEquals(300000000, c.add(100000000, 200000000));
     }
 
     @Test
