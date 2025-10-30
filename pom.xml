@@ -1,19 +1,39 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.example</groupId>
   <artifactId>ci-cd-uebung</artifactId>
   <version>1.0.0</version>
   <name>ci-cd-uebung</name>
   <description>Übung 1: Java-Basisprojekt für CI/CD Kurs</description>
+
   <properties>
+    <!-- Java version of your sources -->
     <maven.compiler.source>24</maven.compiler.source>
     <maven.compiler.target>24</maven.compiler.target>
-    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+
+    <!-- Encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Test stack -->
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
+
+    <!-- Coverage -->
+    <jacoco.version>0.8.12</jacoco.version>
+
+    <!-- SonarCloud config -->
+    <!-- IMPORTANT: set these to your actual org & projectKey from SonarCloud -->
+    <sonar.organization>raphaelg00</sonar.organization>
+    <sonar.projectKey>SONAR_TOKEN</sonar.projectKey>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+    <!-- Tell Sonar where to find JaCoCo XML coverage -->
+    <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
+
   <dependencies>
     <!-- JUnit 5 API -->
     <dependency>
@@ -22,14 +42,16 @@
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- JUnit 5 Engine (wichtig für das Ausführen der Tests) -->
+
+    <!-- JUnit 5 Engine (needed to actually run the tests) -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- Optional: Parameterized tests -->
+
+    <!-- JUnit 5 Parameterized tests -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
@@ -37,14 +59,20 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
-      <!-- JUnit 5/Surefire -->
+
+      <!-- JUnit 5 / Surefire (runs tests in CI and locally) -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>${maven.surefire.plugin.version}</version>
         <configuration>
+          <!-- Avoid JPMS problems in newer JDKs -->
           <useModulePath>false</useModulePath>
+
+          <!-- Your include patterns -->
           <includes>
             <include>**/*Test.java</include>
             <include>**/*Tests.java</include>
@@ -52,16 +80,66 @@
           </includes>
         </configuration>
       </plugin>
-      <!-- JaCoCo Coverage (für SonarCloud in Übung 2 hilfreich) -->
+
+      <!-- JaCoCo: attach agent to tests and generate coverage reports (XML+HTML) -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.11</version>
+        <version>${jacoco.version}</version>
         <executions>
-          <execution><goals><goal>prepare-agent</goal></goals></execution>
-          <execution><id>report</id><phase>test</phase><goals><goal>report</goal></goals></execution>
+
+          <!-- Adds the JaCoCo javaagent when tests run -->
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+
+          <!-- After tests, generate reports.
+               We bind this to 'test' phase so 'mvn verify' or 'mvn test' already produces jacoco.xml -->
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <!-- We explicitly ask for XML because SonarCloud needs XML, not just HTML -->
+              <reports>
+                <report>xml</report>
+                <report>html</report>
+              </reports>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
+
+      <!-- SonarCloud scanner for Maven.
+           This lets us run:
+             mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
+           in GitHub Actions. -->
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.10.0.2594</version>
+      </plugin>
+
     </plugins>
   </build>
+
+  <!-- Optional but nice: make sure surefire uses JUnit 5 automatically -->
+  <profiles>
+    <profile>
+      <id>enable-junit5</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <junit.jupiter.version>${junit.jupiter.version}</junit.jupiter.version>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>
