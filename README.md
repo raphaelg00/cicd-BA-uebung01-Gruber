@@ -1,3 +1,5 @@
+![CI](https://github.com/<raphaelg00>/<cicd-BA-uebung01-Gruber>/actions/workflows/ci.yml/badge.svg
+
 # CI/CD Übung – Java Basisprojekt (Ü1 mit Anleitungen)
 
 Dieses Repository ist der Startpunkt für **Übung 1** und wird in **allen folgenden Übungen** weiterverwendet
