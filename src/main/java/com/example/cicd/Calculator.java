@@ -23,7 +23,7 @@ public class Calculator {
     // (Bug/Code Smell – wird von Sonar i.d.R. markiert)
     public int divide(int a, int b) {
         if (b == 0) {
-            return 0; 
+            throw new IllegalArgumentException("Division by zero is not allowed");
         }
         return a / b; // Integer Division
     }
@@ -39,7 +39,7 @@ public class Calculator {
         return s;
     }
 
-    public int addAll(List<Integer> nums) {
+    /*public int addAll(List<Integer> nums) {
         int s = 0;
         for (Integer n : nums) {
             if (n != null) {
@@ -47,5 +47,5 @@ public class Calculator {
             }
         }
         return s;
-    }
+    }*/
 }
