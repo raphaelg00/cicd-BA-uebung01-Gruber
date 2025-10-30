@@ -26,7 +26,7 @@
 
     <!-- SonarCloud config (fill in projectKey!) -->
     <sonar.organization>raphaelg00</sonar.organization>
-    <sonar.projectKey>raphaelg00_cicd-ba-uebung01-gruber</sonar.projectKey>
+    <sonar.projectKey>raphaelg00_cicd-BA-uebung01-Gruber</sonar.projectKey>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
     <!-- JaCoCo XML coverage path for Sonar -->
