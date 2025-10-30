@@ -10,9 +10,9 @@
   <description>Übung 1: Java-Basisprojekt für CI/CD Kurs</description>
 
   <properties>
-    <!-- Java version of your sources -->
-    <maven.compiler.source>24</maven.compiler.source>
-    <maven.compiler.target>24</maven.compiler.target>
+    <!-- Java version the code is compiled against -->
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
 
     <!-- Encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,13 +24,12 @@
     <!-- Coverage -->
     <jacoco.version>0.8.12</jacoco.version>
 
-    <!-- SonarCloud config -->
-    <!-- IMPORTANT: set these to your actual org & projectKey from SonarCloud -->
+    <!-- SonarCloud config (fill in projectKey!) -->
     <sonar.organization>raphaelg00</sonar.organization>
-    <sonar.projectKey>SONAR_TOKEN</sonar.projectKey>
+    <sonar.projectKey>raphaelg00_cicd-BA-uebung01-Gruber</sonar.projectKey>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
-    <!-- Tell Sonar where to find JaCoCo XML coverage -->
+    <!-- JaCoCo XML coverage path for Sonar -->
     <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
@@ -43,7 +42,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- JUnit 5 Engine (needed to actually run the tests) -->
+    <!-- JUnit 5 Engine (runs the tests) -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
@@ -63,16 +62,16 @@
   <build>
     <plugins>
 
-      <!-- JUnit 5 / Surefire (runs tests in CI and locally) -->
+      <!-- Surefire: run unit tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven.surefire.plugin.version}</version>
         <configuration>
-          <!-- Avoid JPMS problems in newer JDKs -->
+          <!-- Prevent JPMS/module-path issues on newer JDKs -->
           <useModulePath>false</useModulePath>
 
-          <!-- Your include patterns -->
+          <!-- Which files count as tests -->
           <includes>
             <include>**/*Test.java</include>
             <include>**/*Tests.java</include>
@@ -81,14 +80,13 @@
         </configuration>
       </plugin>
 
-      <!-- JaCoCo: attach agent to tests and generate coverage reports (XML+HTML) -->
+      <!-- JaCoCo: code coverage (XML for Sonar, HTML for humans) -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco.version}</version>
         <executions>
-
-          <!-- Adds the JaCoCo javaagent when tests run -->
+          <!-- Attach agent before tests -->
           <execution>
             <id>prepare-agent</id>
             <goals>
@@ -96,8 +94,7 @@
             </goals>
           </execution>
 
-          <!-- After tests, generate reports.
-               We bind this to 'test' phase so 'mvn verify' or 'mvn test' already produces jacoco.xml -->
+          <!-- Generate reports after tests -->
           <execution>
             <id>report</id>
             <phase>test</phase>
@@ -105,21 +102,16 @@
               <goal>report</goal>
             </goals>
             <configuration>
-              <!-- We explicitly ask for XML because SonarCloud needs XML, not just HTML -->
               <reports>
                 <report>xml</report>
                 <report>html</report>
               </reports>
             </configuration>
           </execution>
-
         </executions>
       </plugin>
 
-      <!-- SonarCloud scanner for Maven.
-           This lets us run:
-             mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
-           in GitHub Actions. -->
+      <!-- SonarCloud Maven scanner -->
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
@@ -128,18 +120,5 @@
 
     </plugins>
   </build>
-
-  <!-- Optional but nice: make sure surefire uses JUnit 5 automatically -->
-  <profiles>
-    <profile>
-      <id>enable-junit5</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <properties>
-        <junit.jupiter.version>${junit.jupiter.version}</junit.jupiter.version>
-      </properties>
-    </profile>
-  </profiles>
 
 </project>

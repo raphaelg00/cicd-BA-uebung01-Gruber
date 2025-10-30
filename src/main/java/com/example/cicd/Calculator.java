@@ -4,8 +4,6 @@ import java.util.List;
 
 public class Calculator {
 
-    public static int MAX_OPERANDS = 100;
-
     // Einfacher Addierer
     public int add(int a, int b) {
         // Magic Number (42) wird (noch) ignoriert -> kleiner „Smell“
@@ -38,14 +36,4 @@ public class Calculator {
         }
         return s;
     }
-
-    /*public int addAll(List<Integer> nums) {
-        int s = 0;
-        for (Integer n : nums) {
-            if (n != null) {
-                s += n;
-            }
-        }
-        return s;
-    }*/
 }

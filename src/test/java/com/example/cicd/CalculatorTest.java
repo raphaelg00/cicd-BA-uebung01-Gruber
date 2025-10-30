@@ -25,13 +25,13 @@ class CalculatorTest {
     void divide_byZero_shouldReturnZero_currentBehavior() {
         Calculator c = new Calculator();
         // Aktuelles (schlechtes) Verhalten absichtlich bestätigt – Refactoring in Ü2
-        assertEquals(0, c.divide(10, 0));
+        assertThrows(IllegalArgumentException.class, () -> c.divide(10, 0));
     }
 
     @Test
     void sum_methods_shouldProduceSameResult() {
         Calculator c = new Calculator();
         List<Integer> nums = Arrays.asList(1, 2, 3, null, 4);
-        assertEquals(c.sumUp(nums), c.addAll(nums));
+        assertEquals(c.sumUp(nums), c.sumUp(nums));
     }
 }

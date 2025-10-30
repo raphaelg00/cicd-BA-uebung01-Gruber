@@ -13,8 +13,7 @@ public class TextUtils {
         try {
             return Integer.parseInt(s);
         } catch (NumberFormatException e) {
-            // absichtlich leer gelassen
+            return 0; // „Fallback“ – diskutabel
         }
-        return 0; // „Fallback“ – diskutabel
     }
 }

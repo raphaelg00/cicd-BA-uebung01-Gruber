@@ -10,8 +10,8 @@ public class App {
         
         List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
         int s1 = calc.sumUp(numbers); 
-        //int s2 = calc.addAll(numbers); // commented out to avoid duplication
-        System.out.println("sumUp=" + s1 + ", addAll=" + s2);
+        int s2 = calc.sumUp(numbers);
+        System.out.println("sumUp=" + s1 + ", sumUp=" + s2);
 
         System.out.println("isPalindrome('Anna')? " + TextUtils.isPalindrome("Anna"));
         System.out.println("safeParseInt('42'): " + TextUtils.safeParseInt("42"));
