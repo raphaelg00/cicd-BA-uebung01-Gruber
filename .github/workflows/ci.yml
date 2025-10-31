@@ -79,11 +79,7 @@ jobs:
         run: mvn -B clean verify
 
       - name: SonarCloud Scan
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B sonar:sonar \
-            -Dsonar.organization=${{ secrets.SONAR_ORG || 'raphaelg00' }} \
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY || 'SONAR_TOKEN' }} \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
