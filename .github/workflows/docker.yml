@@ -1,5 +1,5 @@
 name: Docker Image
-
+#Build Docker image and upload as .tar artifact
 on:
   push:
     paths:
