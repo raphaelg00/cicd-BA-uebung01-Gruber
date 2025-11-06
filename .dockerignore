@@ -1,0 +1,9 @@
+# .dockerignore
+target/
+.git/
+.gitignore
+.github/
+.idea/
+.vscode/
+*.iml
+.DS_Store
