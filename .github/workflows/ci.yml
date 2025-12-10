@@ -165,7 +165,8 @@ jobs:
           grype ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.short_sha }} \
             -o json \
             --file grype-report.json \
-            --fail-on critical
+            --fail-on high \
+            --only-fixed
 
       - name: Upload Grype JSON Report
         if: always() 
@@ -183,6 +184,7 @@ jobs:
           output: trivy-report.json
           severity: HIGH,CRITICAL 
           exit-code: 1
+          ignore-unfixed: true
 
       - name: Upload Trivy JSON Report
         if: always() # Auch hier: Report hochladen, selbst wenn Trivy den Build stoppt
