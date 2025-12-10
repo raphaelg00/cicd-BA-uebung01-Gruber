@@ -156,7 +156,7 @@ jobs:
           docker images
 
       - name: Grype Vulnerability Scan
-        uses: anchore/grype-action@v6
+        uses: anchore/grype-action@v0.1.7
         id: grype_scan
         with:
           image: ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.short_sha }}
