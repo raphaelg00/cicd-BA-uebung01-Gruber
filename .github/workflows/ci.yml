@@ -137,7 +137,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
       
-      - name: Set short SHA + image name (Recalculate variables from needed job)
+      - name: Set short SHA + image name
         id: vars
         run: |
           echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
@@ -152,24 +152,27 @@ jobs:
       - name: Load Docker image into engine
         run: |
           docker load --input docker-image-${{ steps.vars.outputs.short_sha }}.tar
-          # Verify it's loaded
           docker images
 
+      - name: Install Grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          grype --version
+
       - name: Grype Vulnerability Scan
-        uses: anchore/grype-action@v0.1.7
-        id: grype_scan
-        with:
-          image: ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.short_sha }}
-          output-format: json
-          output-file: grype-report.json
-          fail-on: critical
+
+        run: |
+          grype ${{ steps.vars.outputs.image_name }}:${{ steps.vars.outputs.short_sha }} \
+            -o json \
+            --file grype-report.json \
+            --fail-on critical
 
       - name: Upload Grype JSON Report
+        if: always() 
         uses: actions/upload-artifact@v4
         with:
           name: grype-security-report
           path: grype-report.json
-
 
       - name: Trivy Vulnerability Scan
         uses: aquasecurity/trivy-action@master
@@ -182,6 +185,7 @@ jobs:
           exit-code: 1
 
       - name: Upload Trivy JSON Report
+        if: always() # Auch hier: Report hochladen, selbst wenn Trivy den Build stoppt
         uses: actions/upload-artifact@v4
         with:
           name: trivy-security-report
