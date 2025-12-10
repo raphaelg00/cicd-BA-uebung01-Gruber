@@ -11,7 +11,9 @@ RUN mvn -q -B -e -DskipTests package && ls -la target
 # --- Runtime Stage ---
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-RUN useradd -r -u 10001 appuser
+RUN apk --no-cache add shadow && \
+    useradd -r -u 10001 appuser && \
+    apk del shadow
 COPY --from=build /app/target/*.jar /app/app.jar
 USER appuser
 ENTRYPOINT ["java","-jar","/app/app.jar"]
